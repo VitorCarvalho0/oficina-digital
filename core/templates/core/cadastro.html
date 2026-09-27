@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Criar Conta - Oficina Digital</title>
+</head>
+<body>
+    <h2>Criar Conta da Oficina</h2>
+    <form method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Cadastrar</button>
+    </form>
+    <p>Já tem uma conta? <a href="{% url 'fazer_login' %}">Entrar</a></p>
+</body>
+</html>
