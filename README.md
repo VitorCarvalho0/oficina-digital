@@ -27,3 +27,36 @@ Siga os passos abaixo para rodar o projeto na sua máquina:
    ```bash
    git clone https://github.scom/VitorCarvalho0/oficina-digital.git
    cd oficina-digital
+
+## Crie e ative um ambiente virtual:
+
+Bash
+python -m venv venv
+## No Windows (PowerShell):
+.\venv\Scripts\Activate
+## No Mac/Linux:
+source venv/bin/activate
+Instale as dependências:
+
+Bash
+pip install django
+Execute as migrações do banco de dados:
+
+Bash
+python manage.py migrate
+Inicie o servidor de desenvolvimento:
+
+Bash
+python manage.py runserver
+Acesse no navegador: http://127.0.0.1:8000/
+
+## 🚀 Próximas Funcionalidades
+[ ] Cadastro completo de veículos e clientes associados.
+
+[ ] Módulo de upload de fotos por ângulos (Frente, Traseira, Laterais).
+
+[ ] Painel de status de manutenção (Recebido, Em Andamento, Finalizado).
+
+[ ] Assinatura digital do cliente na tela.
+
+Feito com 💻 por Vitor Gabriel como parte da jornada de especialização em Python e Django.
