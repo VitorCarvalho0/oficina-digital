@@ -2,11 +2,124 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - Oficina Digital</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-    <h2>Bem-vindo à Oficina Digital, {{ request.user.username }}!</h2>
-    <p>Aqui será o painel de controle dos atendimentos dos veículos.</p>
-    <a href="{% url 'fazer_login' %}">Sair</a>
+<body class="bg-slate-50 min-h-screen text-slate-800">
+
+    <!-- Topbar / Cabeçalho -->
+    <header class="bg-white border-b border-slate-200 px-8 py-4 flex items-center justify-between shadow-sm">
+        <div class="flex items-center space-x-3">
+            <div class="bg-slate-900 text-white p-2.5 rounded-xl flex items-center justify-center shadow">
+                <!-- Ícone de Chave Inglesa -->
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+            </div>
+            <div>
+                <h1 class="text-base font-bold text-slate-900">Oficina do {{ request.user.username|title }}</h1>
+                <p class="text-xs text-slate-500">Dashboard</p>
+            </div>
+        </div>
+
+        <!-- Botão Sair -->
+        <form action="{% url 'fazer_login' %}" method="get" class="inline">
+            <button type="submit" class="flex items-center space-x-1.5 px-3 py-1.5 border border-slate-200 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-100 transition shadow-sm">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                </svg>
+                <span>Sair</span>
+            </button>
+        </form>
+    </header>
+
+    <!-- Conteúdo Principal -->
+    <main class="max-w-6xl mx-auto px-6 py-8">
+
+        <!-- Cards de Resumo -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <!-- Card Em Atendimento -->
+            <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-semibold text-slate-500 mb-1">Em Atendimento</p>
+                    <h2 class="text-3xl font-bold text-slate-900">{{ total_em_atendimento }}</h2>
+                </div>
+                <div class="bg-blue-50 text-blue-600 p-3 rounded-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Card Finalizados -->
+            <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-semibold text-slate-500 mb-1">Finalizados</p>
+                    <h2 class="text-3xl font-bold text-slate-900">{{ total_finalizados }}</h2>
+                </div>
+                <div class="bg-emerald-50 text-emerald-600 p-3 rounded-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <!-- Barra de Pesquisa -->
+        <div class="relative mb-6">
+            <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-400">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+            </span>
+            <input type="text" placeholder="Pesquisar por cliente, placa ou veículo..." class="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-slate-900 shadow-sm">
+        </div>
+
+        <!-- Botão Novo Atendimento -->
+        <a href="{% url 'novo_atendimento' %}" class="block w-full bg-slate-900 hover:bg-slate-800 text-white font-medium py-3 rounded-xl text-xs text-center transition shadow-md mb-8">
+            + Novo Atendimento
+        </a>
+
+        <!-- Lista de Atendimentos Ativos -->
+        <div class="mb-4">
+            <h3 class="text-sm font-bold text-slate-800 mb-4">Atendimentos Ativos ({{ total_em_atendimento }})</h3>
+
+            {% if atendimentos %}
+                <div class="space-y-4">
+                    {% for item in atendimentos %}
+                        <!-- Card clicável direcionando corretamente para os detalhes do atendimento -->
+                        <a href="{% url 'detalhe_atendimento' item.pk %}" class="block bg-white p-5 rounded-xl border border-slate-200 shadow-sm hover:border-slate-400 transition flex items-center justify-between">
+                            <div>
+                                <h4 class="font-bold text-sm text-slate-900 mb-0.5">{{ item.cliente }}</h4>
+                                <p class="text-xs text-slate-500 mb-3">{{ item.veiculo }} - {{ item.placa }}</p>
+                                <div class="flex items-center space-x-6 text-xs text-slate-600">
+                                    <span>Ano: <strong class="text-slate-800">{{ item.ano }}</strong></span>
+                                    <span>KM: <strong class="text-slate-800">{{ item.km }}</strong></span>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <span class="inline-block px-3 py-1 rounded-full text-[11px] font-semibold 
+                                    {% if item.status == 'recebido' %} bg-blue-100 text-blue-700 
+                                    {% elif item.status == 'andamento' %} bg-amber-100 text-amber-700 
+                                    {% else %} bg-emerald-100 text-emerald-700 {% endif %}">
+                                    {{ item.get_status_display }}
+                                </span>
+                                <p class="text-[11px] text-slate-400 mt-2">{{ item.data_criacao|date:"d/m/Y" }}</p>
+                            </div>
+                        </a>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="bg-white p-8 rounded-xl border border-slate-200 text-center shadow-sm">
+                    <p class="text-xs text-slate-500">Nenhum atendimento cadastrado ainda. Clique em "+ Novo Atendimento" para começar!</p>
+                </div>
+            {% endif %}
+        </div>
+
+    </main>
+
 </body>
 </html>

@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Novo Atendimento - Oficina Digital</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-50 min-h-screen text-slate-800 pb-12">
+
+    <!-- Topbar / Cabeçalho -->
+    <header class="bg-white border-b border-slate-200 px-8 py-4 flex items-center justify-between shadow-sm">
+        <div class="flex items-center space-x-3">
+            <a href="{% url 'dashboard' %}" class="text-slate-500 hover:text-slate-900 transition">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+            </a>
+            <div>
+                <h1 class="text-base font-bold text-slate-900">Novo Atendimento</h1>
+                <p class="text-xs text-slate-500">Preencha os dados do veículo e checklist</p>
+            </div>
+        </div>
+    </header>
+
+    <!-- Formulário Principal -->
+    <main class="max-w-4xl mx-auto px-6 py-8">
+        <form method="POST" enctype="multipart/form-data" class="space-y-6">
+            {% csrf_token %}
+
+            <!-- Seção: Dados do Cliente -->
+            <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
+                <h2 class="text-sm font-bold text-slate-900 border-b pb-2">Dados do Cliente</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Nome do Cliente</label>
+                        <input type="text" name="cliente" required placeholder="Ex: João da Silva" class="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-slate-900 bg-slate-50/50">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Telefone</label>
+                        <input type="text" name="telefone" placeholder="(11) 99999-9999" class="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-slate-900 bg-slate-50/50">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Seção: Dados do Veículo -->
+            <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
+                <h2 class="text-sm font-bold text-slate-900 border-b pb-2">Dados do Veículo</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Veículo</label>
+                        <input type="text" name="veiculo" required placeholder="Ex: Fiat Uno 1.0" class="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-slate-900 bg-slate-50/50">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Placa</label>
+                        <input type="text" name="placa" required placeholder="Ex: ABC-1234" class="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-slate-900 bg-slate-50/50 uppercase">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Letra Vidro</label>
+                        <input type="text" name="letra_vidro" placeholder="L" class="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-slate-900 bg-slate-50/50">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Ano</label>
+                        <input type="number" name="ano" placeholder="2024" class="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-slate-900 bg-slate-50/50">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">KM</label>
+                        <input type="number" name="km" placeholder="44560" class="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-slate-900 bg-slate-50/50">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Seção: Fotos do Veículo -->
+            <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
+                <div class="flex items-center justify-between border-b pb-2">
+                    <div>
+                        <h2 class="text-sm font-bold text-slate-900">Fotos do Veículo</h2>
+                        <p class="text-[11px] text-slate-500">Capture fotos de todos os ângulos e detalhes extras</p>
+                    </div>
+                    <!-- Botão Adicionar Foto dinâmico -->
+                    <button type="button" onclick="adicionarCampoFoto()" class="bg-slate-900 hover:bg-slate-800 text-white font-medium px-3 py-1.5 rounded-lg text-xs transition shadow-sm flex items-center space-x-1">
+                        <span>+ Adicionar Foto</span>
+                    </button>
+                </div>
+
+                <!-- Ângulos Padrão -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+                    <!-- Frente -->
+                    <div class="border-2 border-dashed border-slate-200 rounded-xl p-4 text-center hover:border-slate-400 transition cursor-pointer relative bg-slate-50/50">
+                        <span class="block text-xs font-semibold text-slate-600 mb-2">Frente</span>
+                        <input type="file" name="foto_frente" accept="image/*" class="absolute inset-0 opacity-0 cursor-pointer">
+                        <div class="flex flex-col items-center justify-center py-4 text-slate-400 feedback-box">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                            </svg>
+                            <span class="text-[10px]">Clique para enviar</span>
+                        </div>
+                    </div>
+
+                    <!-- Traseira -->
+                    <div class="border-2 border-dashed border-slate-200 rounded-xl p-4 text-center hover:border-slate-400 transition cursor-pointer relative bg-slate-50/50">
+                        <span class="block text-xs font-semibold text-slate-600 mb-2">Traseira</span>
+                        <input type="file" name="foto_tras" accept="image/*" class="absolute inset-0 opacity-0 cursor-pointer">
+                        <div class="flex flex-col items-center justify-center py-4 text-slate-400 feedback-box">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                            </svg>
+                            <span class="text-[10px]">Clique para enviar</span>
+                        </div>
+                    </div>
+
+                    <!-- Lateral Esquerda -->
+                    <div class="border-2 border-dashed border-slate-200 rounded-xl p-4 text-center hover:border-slate-400 transition cursor-pointer relative bg-slate-50/50">
+                        <span class="block text-xs font-semibold text-slate-600 mb-2">Lateral Esquerda</span>
+                        <input type="file" name="foto_lat_esq" accept="image/*" class="absolute inset-0 opacity-0 cursor-pointer">
+                        <div class="flex flex-col items-center justify-center py-4 text-slate-400 feedback-box">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                            </svg>
+                            <span class="text-[10px]">Clique para enviar</span>
+                        </div>
+                    </div>
+
+                    <!-- Lateral Direita -->
+                    <div class="border-2 border-dashed border-slate-200 rounded-xl p-4 text-center hover:border-slate-400 transition cursor-pointer relative bg-slate-50/50">
+                        <span class="block text-xs font-semibold text-slate-600 mb-2">Lateral Direita</span>
+                        <input type="file" name="foto_lat_dir" accept="image/*" class="absolute inset-0 opacity-0 cursor-pointer">
+                        <div class="flex flex-col items-center justify-center py-4 text-slate-400 feedback-box">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                            </svg>
+                            <span class="text-[10px]">Clique para enviar</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Container onde novas fotos extras vão aparecer dinamicamente -->
+                <div id="fotos-extras-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 pt-2"></div>
+            </div>
+
+            <!-- Seção: Observações -->
+            <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
+                <h2 class="text-sm font-bold text-slate-900 border-b pb-2">Observações</h2>
+                <textarea name="observacoes" rows="4" placeholder="Descreva avarias extras, ex: Roda direita ralada, capô com trava quebrada..." class="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-slate-900 bg-slate-50/50"></textarea>
+            </div>
+
+            <!-- Botão Criar Atendimento -->
+            <button type="submit" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-medium py-3 rounded-xl text-xs transition shadow-md">
+                Criar Atendimento
+            </button>
+        </form>
+    </main>
+
+    <!-- Script JavaScript -->
+    <script>
+        let contadorFotos = 1;
+
+        function adicionarCampoFoto() {
+            const container = document.getElementById('fotos-extras-container');
+            const idFoto = 'foto_extra_' + contadorFotos++;
+
+            const div = document.createElement('div');
+            div.className = "border-2 border-dashed border-slate-300 rounded-xl p-4 text-center relative bg-white shadow-sm";
+            div.innerHTML = `
+                <input type="text" name="titulo_foto_${idFoto}" placeholder="Ex: Roda Direita" class="w-full text-xs font-semibold text-slate-700 mb-2 border-b border-slate-100 pb-1 focus:outline-none focus:border-slate-900 text-center">
+                <input type="file" name="${idFoto}" accept="image/*" onchange="atualizarFeedback(this)" class="absolute inset-0 opacity-0 cursor-pointer">
+                <div class="flex flex-col items-center justify-center py-2 text-slate-400 feedback-box">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4v16m8-8H4" />
+                    </svg>
+                    <span class="text-[10px]">Clique para enviar foto extra</span>
+                </div>
+            `;
+            container.appendChild(div);
+        }
+
+        // Função que dá feedback visual quando o arquivo é selecionado
+        function atualizarFeedback(input) {
+            if (input.files && input.files[0]) {
+                const nomeArquivo = input.files[0].name;
+                const feedbackBox = input.parentElement.querySelector('.feedback-box');
+                if (feedbackBox) {
+                    feedbackBox.innerHTML = `
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mb-1 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                        </svg>
+                        <span class="text-[10px] font-semibold text-emerald-700 truncate max-w-[150px]">${nomeArquivo}</span>
+                    `;
+                    input.parentElement.classList.remove('border-slate-200', 'border-slate-300');
+                    input.parentElement.classList.add('border-emerald-500', 'bg-emerald-50/30');
+                }
+            }
+        }
+
+        // Aplicar o feedback a todos os inputs de arquivo da página
+        document.querySelectorAll('input[type="file"]').forEach(input => {
+            input.addEventListener('change', function() {
+                atualizarFeedback(this);
+            });
+        });
+    </script>
+
+</body>
+</html>
