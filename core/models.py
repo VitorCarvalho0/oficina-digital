@@ -1,3 +1,4 @@
+import uuid
 from django.db import models
 from django.contrib.auth.models import User
 
@@ -8,6 +9,9 @@ class Atendimento(models.Model):
         ('finalizado', 'Finalizado'),
     ]
 
+    # Token único para o link público de acompanhamento do cliente
+    token = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    
     usuario = models.ForeignKey(User, on_delete=models.CASCADE)
     
     # Dados do Cliente
@@ -21,7 +25,7 @@ class Atendimento(models.Model):
     ano = models.IntegerField()
     km = models.IntegerField()
     
-    # Fotos dos Ângulos Padrão
+    # Fotos Padrão
     foto_frente = models.ImageField(upload_to='veiculos/', blank=True, null=True)
     foto_tras = models.ImageField(upload_to='veiculos/', blank=True, null=True)
     foto_lat_esq = models.ImageField(upload_to='veiculos/', blank=True, null=True)
@@ -36,10 +40,10 @@ class Atendimento(models.Model):
         return f"{self.cliente} - {self.veiculo} ({self.placa})"
 
 
-# Novo Model para salvar fotos extras dinâmicas ilimitadas
+# Model de fotos extras que estava faltando import no views.py
 class FotoAtendimento(models.Model):
     atendimento = models.ForeignKey(Atendimento, related_name='fotos_extras', on_delete=models.CASCADE)
-    titulo = models.CharField(max_length=100, default='Detalhe') # Ex: Roda Direita
+    titulo = models.CharField(max_length=100, default='Detalhe')
     imagem = models.ImageField(upload_to='veiculos/extras/')
 
     def __str__(self):

@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Status do Veículo - {{ atendimento.veiculo }}</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-100 min-h-screen text-slate-800 pb-12">
+
+    <!-- Topbar -->
+    <header class="bg-white border-b border-slate-200 px-6 py-4 text-center shadow-sm">
+        <h1 class="text-base font-bold text-slate-900">Oficina Digital</h1>
+        <p class="text-xs text-slate-500">Comprovativo e Vistoria do Veículo</p>
+    </header>
+
+    <main class="max-w-2xl mx-auto px-4 py-6 space-y-6">
+
+        <!-- Status -->
+        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm text-center">
+            <p class="text-xs text-slate-500 font-medium uppercase tracking-wider mb-2">Estado Atual do Serviço</p>
+            
+            {% if atendimento.status == 'recebido' %}
+                <span class="inline-block px-4 py-1.5 rounded-full text-xs font-bold bg-blue-100 text-blue-700">
+                    Recebido na Oficina
+                </span>
+            {% elif atendimento.status == 'andamento' %}
+                <span class="inline-block px-4 py-1.5 rounded-full text-xs font-bold bg-amber-100 text-amber-700">
+                    Em Manutenção / Andamento
+                </span>
+            {% else %}
+                <span class="inline-block px-4 py-1.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-700">
+                    Pronto para Levantamento!
+                </span>
+            {% endif %}
+
+            <p class="text-[11px] text-slate-400 mt-3">Data de entrada: {{ atendimento.data_criacao|date:"d/m/Y" }}</p>
+        </div>
+
+        <!-- Informações -->
+        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-3">
+            <h2 class="text-xs font-bold text-slate-900 uppercase tracking-wide border-b pb-2">Informações</h2>
+            <div class="grid grid-cols-2 gap-4 text-xs">
+                <div>
+                    <span class="text-slate-400 block">Cliente</span>
+                    <strong class="text-slate-800">{{ atendimento.cliente }}</strong>
+                </div>
+                <div>
+                    <span class="text-slate-400 block">Veículo</span>
+                    <strong class="text-slate-800">{{ atendimento.veiculo }}</strong>
+                </div>
+                <div>
+                    <span class="text-slate-400 block">Placa</span>
+                    <strong class="text-slate-800 uppercase">{{ atendimento.placa }}</strong>
+                </div>
+                <div>
+                    <span class="text-slate-400 block">Quilometragem</span>
+                    <strong class="text-slate-800">{{ atendimento.km }} KM</strong>
+                </div>
+            </div>
+        </div>
+
+        <!-- Vistoria Fotográfica com Zoom -->
+        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+            <h2 class="text-xs font-bold text-slate-900 uppercase tracking-wide border-b pb-2">Vistoria Fotográfica (Clique para Ampliar)</h2>
+            
+            <div class="grid grid-cols-2 gap-3">
+                {% if atendimento.foto_frente %}
+                    <div class="border rounded-xl p-2 bg-slate-50 text-center">
+                        <img src="{{ atendimento.foto_frente.url }}" onclick="abrirModal(this.src)" class="h-32 w-full object-cover rounded-lg mb-1 cursor-pointer hover:opacity-90 transition">
+                        <span class="text-[10px] text-slate-500">Frente</span>
+                    </div>
+                {% endif %}
+                {% if atendimento.foto_tras %}
+                    <div class="border rounded-xl p-2 bg-slate-50 text-center">
+                        <img src="{{ atendimento.foto_tras.url }}" onclick="abrirModal(this.src)" class="h-32 w-full object-cover rounded-lg mb-1 cursor-pointer hover:opacity-90 transition">
+                        <span class="text-[10px] text-slate-500">Traseira</span>
+                    </div>
+                {% endif %}
+                {% if atendimento.foto_lat_esq %}
+                    <div class="border rounded-xl p-2 bg-slate-50 text-center">
+                        <img src="{{ atendimento.foto_lat_esq.url }}" onclick="abrirModal(this.src)" class="h-32 w-full object-cover rounded-lg mb-1 cursor-pointer hover:opacity-90 transition">
+                        <span class="text-[10px] text-slate-500">Lateral Esquerda</span>
+                    </div>
+                {% endif %}
+                {% if atendimento.foto_lat_dir %}
+                    <div class="border rounded-xl p-2 bg-slate-50 text-center">
+                        <img src="{{ atendimento.foto_lat_dir.url }}" onclick="abrirModal(this.src)" class="h-32 w-full object-cover rounded-lg mb-1 cursor-pointer hover:opacity-90 transition">
+                        <span class="text-[10px] text-slate-500">Lateral Direita</span>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Fotos Extras -->
+            {% if atendimento.fotos_extras.all %}
+                <h3 class="text-xs font-bold text-slate-700 pt-2 border-t">Pormenores Registrados</h3>
+                <div class="grid grid-cols-2 gap-3">
+                    {% for foto in atendimento.fotos_extras.all %}
+                        <div class="border rounded-xl p-2 bg-slate-50 text-center">
+                            <img src="{{ foto.imagem.url }}" onclick="abrirModal(this.src)" class="h-32 w-full object-cover rounded-lg mb-1 cursor-pointer hover:opacity-90 transition">
+                            <span class="text-[10px] text-slate-500">{{ foto.titulo }}</span>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Observações -->
+        {% if atendimento.observacoes %}
+        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-2">
+            <h2 class="text-xs font-bold text-slate-900 uppercase tracking-wide border-b pb-2">Serviços e Observações</h2>
+            <p class="text-xs text-slate-600 whitespace-pre-line">{{ atendimento.observacoes }}</p>
+        </div>
+        {% endif %}
+
+    </main>
+
+    <!-- Modal para Zoom -->
+    <div id="imageModal" class="fixed inset-0 bg-black/80 hidden z-50 flex items-center justify-center p-4 cursor-pointer" onclick="fecharModal()">
+        <div class="relative max-w-4xl w-full flex justify-center">
+            <img id="modalImg" class="max-h-[90vh] max-w-full rounded-xl shadow-2xl object-contain">
+        </div>
+    </div>
+
+    <script>
+        function abrirModal(src) {
+            document.getElementById('modalImg').src = src;
+            document.getElementById('imageModal').classList.remove('hidden');
+        }
+        function fecharModal() {
+            document.getElementById('imageModal').classList.add('hidden');
+        }
+    </script>
+</body>
+</html>

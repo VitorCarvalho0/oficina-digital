@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Comprovativo de Atendimento - {{ atendimento.placa }}</title>
+    <style>
+        body { font-family: Helvetica, Arial, sans-serif; color: #333; font-size: 10px; margin: 10px; }
+        .header { text-align: center; border-bottom: 2px solid #000; padding-bottom: 6px; margin-bottom: 12px; }
+        .header h1 { margin: 0; font-size: 16px; text-transform: uppercase; }
+        .header p { margin: 2px 0 0; color: #666; font-size: 8px; }
+        .box { border: 1px solid #ccc; padding: 8px; margin-bottom: 10px; border-radius: 4px; }
+        .title { font-size: 10px; font-weight: bold; text-transform: uppercase; border-bottom: 1px solid #eee; padding-bottom: 3px; margin-bottom: 6px; }
+        table { width: 100%; border-collapse: collapse; }
+        td { padding: 3px 0; font-size: 10px; vertical-align: top; }
+        .label { color: #666; font-size: 8px; }
+        .value { font-weight: bold; }
+        .notes { font-style: italic; background: #f9f9f9; padding: 6px; border-radius: 4px; }
+        .img-grid { width: 100%; margin-top: 4px; }
+        .img-card { text-align: center; padding: 4px; width: 50%; }
+        /* Apenas largura fixa para evitar distorção da imagem */
+        .img-card img { width: 180px; max-height: 120px; border-radius: 4px; border: 1px solid #ddd; }
+        .footer { margin-top: 20px; text-align: center; font-size: 8px; color: #888; }
+        .signature-box { margin-top: 20px; text-align: center; }
+        .line { border-top: 1px solid #000; width: 50%; margin: 0 auto 4px; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>Oficina Digital</h1>
+        <p>Comprovativo de Receção e Checklist de Vistoria</p>
+    </div>
+
+    <div class="box">
+        <div class="title">Dados do Cliente e Veículo</div>
+        <table>
+            <tr>
+                <td><span class="label">Cliente:</span> <span class="value">{{ atendimento.cliente }}</span></td>
+                <td><span class="label">Telefone:</span> <span class="value">{{ atendimento.telefone|default:'-' }}</span></td>
+            </tr>
+            <tr>
+                <td><span class="label">Veículo:</span> <span class="value">{{ atendimento.veiculo }}</span></td>
+                <td><span class="label">Placa:</span> <span class="value">{{ atendimento.placa }}</span></td>
+            </tr>
+            <tr>
+                <td><span class="label">Ano / KM:</span> <span class="value">{{ atendimento.ano }} / {{ atendimento.km }} KM</span></td>
+                <td><span class="label">Data de Entrada:</span> <span class="value">{{ atendimento.data_criacao|date:"d/m/Y" }}</span></td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="box">
+        <div class="title">Vistoria Fotográfica</div>
+        <table class="img-grid">
+            <tr>
+                {% if atendimento.foto_frente %}
+                <td class="img-card"><img src="{{ atendimento.foto_frente.url }}"><br><span class="label">Frente</span></td>
+                {% endif %}
+                {% if atendimento.foto_tras %}
+                <td class="img-card"><img src="{{ atendimento.foto_tras.url }}"><br><span class="label">Traseira</span></td>
+                {% endif %}
+            </tr>
+            <tr>
+                {% if atendimento.foto_lat_esq %}
+                <td class="img-card"><img src="{{ atendimento.foto_lat_esq.url }}"><br><span class="label">Lat. Esquerda</span></td>
+                {% endif %}
+                {% if atendimento.foto_lat_dir %}
+                <td class="img-card"><img src="{{ atendimento.foto_lat_dir.url }}"><br><span class="label">Lat. Direita</span></td>
+                {% endif %}
+            </tr>
+        </table>
+
+        {% if atendimento.fotos_extras.all %}
+        <div class="title" style="margin-top: 10px;">Fotos Extras</div>
+        <table class="img-grid">
+            <tr>
+                {% for foto in atendimento.fotos_extras.all %}
+                <td class="img-card"><img src="{{ foto.imagem.url }}"><br><span class="label">{{ foto.titulo }}</span></td>
+                {% if forloop.counter|divisibleby:2 and not forloop.last %}</tr><tr>{% endif %}
+                {% endfor %}
+            </tr>
+        </table>
+        {% endif %}
+    </div>
+
+    <div class="box">
+        <div class="title">Observações e Serviços</div>
+        <div class="notes">
+            {{ atendimento.observacoes|default:'Nenhuma observação registrada.' }}
+        </div>
+    </div>
+
+    <div class="signature-box">
+        <div class="line"></div>
+        <p class="label">Assinatura do Cliente / Responsável</p>
+    </div>
+
+    <div class="footer">
+        Documento gerado pela plataforma Oficina Digital em {{ atendimento.data_criacao|date:"d/m/Y" }}.
+    </div>
+
+</body>
+</html>
